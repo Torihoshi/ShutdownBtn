@@ -3,20 +3,22 @@ import os
 import threading
 import time
 
-# タイマーのデフォルト値（秒）
-default_timer = 60
+# タイマーのデフォルト値（分）
+default_timer = 30  # 30分
 
 def start_shutdown_timer():
     # 入力されたタイマー値を取得
     try:
-        timer_seconds = int(timer_entry.get())
+        timer_minutes = int(timer_entry.get())
     except ValueError:
-        timer_seconds = default_timer
+        timer_minutes = default_timer
 
-    # シャットダウンを実行する関数
+    # 分を秒に変換
+    timer_seconds = timer_minutes * 60
+
+    # シャットダウンを予約する関数
     def shutdown():
-        time.sleep(timer_seconds)
-        os.system("shutdown /s /t 1")
+        os.system(f"shutdown /s /hybrid /f /t {timer_seconds}")
 
     # タイマースレッドを開始
     timer_thread = threading.Thread(target=shutdown)
@@ -31,7 +33,7 @@ window = tk.Tk()
 window.title("シャットダウンタイマー")
 
 # タイマー入力フィールド
-timer_label = tk.Label(window, text="タイマー（秒）:")
+timer_label = tk.Label(window, text="タイマー（分）:")
 timer_label.pack()
 timer_entry = tk.Entry(window)
 timer_entry.insert(0, str(default_timer))
